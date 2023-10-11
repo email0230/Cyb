@@ -13,6 +13,7 @@
                 @Html.DisplayNameFor(model => model.UserName)
             </th>
             <th><a asp-action="Create">Create user</a></th>
+            <th>Delete user</a></th>
         </tr>
     </thead>
     <tbody>
@@ -24,6 +25,9 @@
                 </td>
                 <td>
                     <a asp-action="Edit" asp-route-id="@item.UserName">Edit</a>
+                </td>
+                <td>
+                    @Html.ActionLink("Delete", "Delete", new { email=item.Email })
                 </td>
             </tr>
         }

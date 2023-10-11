@@ -1,4 +1,5 @@
 ﻿using Cyb_mcfr.Data;
+using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -82,16 +83,23 @@ namespace Cyb_mcfr.Controllers
         }
 
         // GET: UsersController/Delete/5
-        public ActionResult Delete(int id)
+        public async Task<ActionResult> Delete(string email)
         {
-            return View();
+            var user = await userManager.FindByEmailAsync(email);
+            UserModel model = new UserModel { Email = user.Email, Password = "123" };
+
+            return View(model);
         }
 
         // POST: UsersController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, IFormCollection collection)
+        public async Task<ActionResult> Delete(string email, IFormCollection collection)
         {
+            var user = userManager.FindByEmailAsync(email);
+
+            await userManager.DeleteAsync(user.Result);
+
             try
             {
                 return RedirectToAction(nameof(Index));
