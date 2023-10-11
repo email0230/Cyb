@@ -62,16 +62,24 @@ namespace Cyb_mcfr.Controllers
         }
 
         // GET: UsersController/Edit/5
-        public ActionResult Edit(int id)
+        public async Task<ActionResult> Edit(string email)
         {
-            return View();
+            var user = await userManager.FindByEmailAsync(email);
+            UserModel model = new UserModel { Email = user.Email, Password = "" };
+
+            return View(model);
         }
 
         // POST: UsersController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Edit(int id, IFormCollection collection)
+        public async Task<ActionResult> Edit(string email, IFormCollection collection)
         {
+            var user = await userManager.FindByEmailAsync(email);
+
+            await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result );
+            await userManager.ChangePasswordAsync(user, collection["oldPassword"], collection["newPassword"]);
+
             try
             {
                 return RedirectToAction(nameof(Index));
