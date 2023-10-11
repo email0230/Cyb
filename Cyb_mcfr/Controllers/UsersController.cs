@@ -8,10 +8,12 @@ namespace Cyb_mcfr.Controllers
     public class UsersController : Controller
     {
         ApplicationDbContext context;
+        UserManager<IdentityUser> userManager;
 
-        public UsersController(ApplicationDbContext c)
+        public UsersController(ApplicationDbContext c, UserManager<IdentityUser> userManager)
         {
             context = c;
+            this.userManager = userManager;
         }
 
 
@@ -39,8 +41,15 @@ namespace Cyb_mcfr.Controllers
         // POST: UsersController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public ActionResult Create(IFormCollection collection)
+        public async Task<ActionResult> Create(IFormCollection collection)
         {
+            var user = new IdentityUser();
+            user.UserName = collection["email"];
+            user.Email = collection["email"];
+            user.EmailConfirmed = true;
+
+            await userManager.CreateAsync(user, collection["password"]);
+
             try
             {
                 return RedirectToAction(nameof(Index));
