@@ -9,9 +9,9 @@ namespace Cyb_mcfr.Controllers
     public class UsersController : Controller
     {
         ApplicationDbContext context;
-        UserManager<IdentityUser> userManager;
+        UserManager<ApplicationUser> userManager;
 
-        public UsersController(ApplicationDbContext c, UserManager<IdentityUser> userManager)
+        public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager)
         {
             context = c;
             this.userManager = userManager;
@@ -44,7 +44,7 @@ namespace Cyb_mcfr.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Create(IFormCollection collection)
         {
-            var user = new IdentityUser();
+            var user = new ApplicationUser();
             user.UserName = collection["email"];
             user.Email = collection["email"];
             user.EmailConfirmed = true;

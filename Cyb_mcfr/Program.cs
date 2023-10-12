@@ -1,4 +1,5 @@
 using Cyb_mcfr.Data;
+using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,7 +17,7 @@ namespace Cyb_mcfr
                 options.UseInMemoryDatabase("cyberbezpieczenstwo"));
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
@@ -63,14 +64,14 @@ namespace Cyb_mcfr
 
             using (var scope = app.Services.CreateScope())
             {
-                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
                 string email = "admin@admin.com";
                 string password = "Admin!23";
 
                 if (await userManager.FindByNameAsync(email) == null)
                 {
-                    var user = new IdentityUser();
+                    var user = new ApplicationUser();
                     user.UserName = email;
                     user.Email = email;
                     user.EmailConfirmed = true;
