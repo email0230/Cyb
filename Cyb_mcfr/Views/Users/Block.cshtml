@@ -1,0 +1,43 @@
+﻿@model UserModel
+
+@{
+    ViewData["Title"] = "Block";
+}
+
+<h1>Block</h1>
+
+@if (Model.IsBlocked)
+{
+    <h3>Are you sure you want to unblock this account?</h3>
+}
+@if (!Model.IsBlocked)
+{
+     <h3>Are you sure you want to block this account?</h3>
+}
+
+<div>
+    <h4>User</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+    </dl>
+
+    <form asp-action="Block">
+        <input asp-for="Email" hidden />
+        @if (Model.IsBlocked)
+        {
+            <input type="submit" value="Unblock" class="btn btn-danger" />
+        }
+        @if (!Model.IsBlocked)
+        {
+            <input type="submit" value="Block" class="btn btn-danger" />
+        }
+        
+        <a asp-action="Index">Back to List</a>
+    </form>
+</div>

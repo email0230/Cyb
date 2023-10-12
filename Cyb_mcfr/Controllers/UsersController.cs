@@ -86,6 +86,7 @@ namespace Cyb_mcfr.Controllers
                 var pass = userManager.PasswordHasher.HashPassword(user, collection["NewPassword"]);
                 user.PasswordHash = pass;
                 await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
+                await userManager.UpdateAsync(user);
             }
 
             try
@@ -102,7 +103,7 @@ namespace Cyb_mcfr.Controllers
         public async Task<ActionResult> Delete(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            UserModel model = new UserModel { Email = user.Email, Password = "123" };
+            UserModel model = new UserModel { Email = user.Email };
 
             return View(model);
         }
@@ -115,6 +116,33 @@ namespace Cyb_mcfr.Controllers
             var user = await userManager.FindByEmailAsync(email);
 
             await userManager.DeleteAsync(user);
+
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public async Task<ActionResult> Block(string email)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+            UserModel model = new UserModel { Email = user.Email, IsBlocked = user.isBlocked };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Block(string email, IFormCollection collection)
+        {
+            var user = await userManager.FindByEmailAsync(email);
+
+            user.isBlocked = !user.isBlocked;
+            await userManager.UpdateAsync(user);
 
             try
             {

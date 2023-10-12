@@ -14,6 +14,7 @@
             </th>
             <th>Edit user</th>
             <th>Delete user</th>
+            <th>Block</th>
             <th><a asp-action="Create">Create user</a></th>
         </tr>
     </thead>
@@ -29,6 +30,13 @@
                 </td>
                 <td>
                     @Html.ActionLink("Delete", "Delete", new { email=item.Email })
+                </td>
+                <td>
+                    @Html.ActionLink("Block", "Block", new { email=item.Email })
+                </td>
+                <td>
+                    @if (item.isBlocked) { <div>Blocked</div> }
+                    @if (!item.isBlocked) { <div>-</div> }
                 </td>
             </tr>
         }
