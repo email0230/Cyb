@@ -142,6 +142,12 @@ namespace Cyb_mcfr.Controllers
             var user = await userManager.FindByEmailAsync(email);
 
             user.isBlocked = !user.isBlocked;
+
+            if(user.isBlocked)
+                user.LockoutEnd = DateTime.MaxValue;
+            else
+                user.LockoutEnd = DateTime.Now;
+
             await userManager.UpdateAsync(user);
 
             try
