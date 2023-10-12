@@ -115,6 +115,14 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: false);
                 if (result.Succeeded)
                 {
+                    var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
+                    bool isAdmin = await _signInManager.UserManager.IsInRoleAsync(user, "Admin");
+
+                    if(!isAdmin)
+                    {
+                        returnUrl = "/Identity/Account/Manage";
+                    }
+
                     _logger.LogInformation("User logged in.");
                     return LocalRedirect(returnUrl);
                 }
@@ -129,7 +137,7 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                 }
                 else
                 {
-                    ModelState.AddModelError(string.Empty, "Invalid login attempt.");
+                    ModelState.AddModelError(string.Empty, "Email or password is incorrect.");
                     return Page();
                 }
             }

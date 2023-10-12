@@ -50,6 +50,7 @@ namespace Cyb_mcfr.Controllers
             user.EmailConfirmed = true;
 
             await userManager.CreateAsync(user, collection["password"]);
+            await userManager.AddToRoleAsync(user, "User");
 
             try
             {

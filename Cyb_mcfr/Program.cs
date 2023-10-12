@@ -53,7 +53,7 @@ namespace Cyb_mcfr
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                var roles = new[] { "Admin", "Operator", "User" };
+                var roles = new[] { "Admin", "User" };
 
                 foreach (var role in roles)
                 {
