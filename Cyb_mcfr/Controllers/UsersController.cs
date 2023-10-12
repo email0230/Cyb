@@ -65,7 +65,7 @@ namespace Cyb_mcfr.Controllers
         public async Task<ActionResult> Edit(string email)
         {
             var user = await userManager.FindByEmailAsync(email);
-            UserModel model = new UserModel { Email = user.Email, Password = "" };
+            EditUserModel model = new EditUserModel { Email = user.Email, Password = user.PasswordHash };
 
             return View(model);
         }
@@ -76,9 +76,17 @@ namespace Cyb_mcfr.Controllers
         public async Task<ActionResult> Edit(string email, IFormCollection collection)
         {
             var user = await userManager.FindByEmailAsync(email);
+            
+            if(collection["NewPassword"].Equals(collection["NewPasswordConfirm"]))
+            {
+                user.UserName = collection["NewEmail"];
+                user.Email = collection["NewEmail"];
+                user.NormalizedEmail = user.Email.Normalize();
 
-            await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result );
-            await userManager.ChangePasswordAsync(user, collection["oldPassword"], collection["newPassword"]);
+                var pass = userManager.PasswordHasher.HashPassword(user, collection["NewPassword"]);
+                user.PasswordHash = pass;
+                await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
+            }
 
             try
             {
@@ -104,9 +112,9 @@ namespace Cyb_mcfr.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Delete(string email, IFormCollection collection)
         {
-            var user = userManager.FindByEmailAsync(email);
+            var user = await userManager.FindByEmailAsync(email);
 
-            await userManager.DeleteAsync(user.Result);
+            await userManager.DeleteAsync(user);
 
             try
             {
