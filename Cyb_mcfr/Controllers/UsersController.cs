@@ -1,11 +1,13 @@
 ﻿using Cyb_mcfr.Data;
 using Cyb_mcfr.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Cyb_mcfr.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         ApplicationDbContext context;
