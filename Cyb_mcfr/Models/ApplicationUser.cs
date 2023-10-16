@@ -8,7 +8,8 @@ namespace Cyb_mcfr.Models
         public DateTime PasswordValidity { get; set; }
         public bool NeedToChangePassword { get; set; }
         public string[] PasswordHistory { get; set; } = new string[0];
-        public bool EnablePasswordValidation { get; set; }
+        public bool EnablePasswordValidation { get; set; } = true;
+        //check if there is a better way to make users have this enabled by default
     }
 
     //public class PasswordHistoryItem
