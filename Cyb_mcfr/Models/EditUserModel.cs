@@ -5,6 +5,8 @@ namespace Cyb_mcfr.Models
 {
     public class EditUserModel
     {
+        public int Min { get; set; } = 5;
+
         [Required]
         public string? Email { get; set; }
         [Required]
