@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace Cyb_mcfr.Controllers
 {
-    [Authorize]
+    [Authorize(Roles = "User")]
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;

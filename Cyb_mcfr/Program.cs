@@ -75,6 +75,7 @@ namespace Cyb_mcfr
                     user.UserName = email;
                     user.Email = email;
                     user.EmailConfirmed = true;
+                    user.PasswordValidity = DateTime.MaxValue;
 
                     await userManager.CreateAsync(user, password);
 

@@ -118,6 +118,8 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
                 return Page();
             }
 
+            user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
+
             await _signInManager.RefreshSignInAsync(user);
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";

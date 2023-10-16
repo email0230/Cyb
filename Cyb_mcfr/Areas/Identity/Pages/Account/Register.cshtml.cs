@@ -121,6 +121,8 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
 
                 if (result.Succeeded)
                 {
+                    user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
+
                     _logger.LogInformation("User created a new account with password.");
 
                     var userId = await _userManager.GetUserIdAsync(user);

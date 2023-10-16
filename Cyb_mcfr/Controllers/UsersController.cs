@@ -13,6 +13,8 @@ namespace Cyb_mcfr.Controllers
         ApplicationDbContext context;
         UserManager<ApplicationUser> userManager;
 
+        static int PasswordValidityDays = 30;
+
         public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager)
         {
             context = c;
@@ -50,9 +52,12 @@ namespace Cyb_mcfr.Controllers
             user.UserName = collection["email"];
             user.Email = collection["email"];
             user.EmailConfirmed = true;
+            user.NeedToChangePassword = true;
+            user.PasswordHash = userManager.PasswordHasher.HashPassword(user, collection["password"]);
+            user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
 
-            await userManager.CreateAsync(user, collection["password"]);
-            await userManager.AddToRoleAsync(user, "User");
+            await userManager.CreateAsync(user);
+            //await userManager.AddToRoleAsync(user, "User");
 
             try
             {
@@ -88,6 +93,8 @@ namespace Cyb_mcfr.Controllers
 
                 var pass = userManager.PasswordHasher.HashPassword(user, collection["NewPassword"]);
                 user.PasswordHash = pass;
+                user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
+                user.PasswordValidity = DateTime.Now.AddDays(PasswordValidityDays);
                 await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
                 await userManager.UpdateAsync(user);
             }

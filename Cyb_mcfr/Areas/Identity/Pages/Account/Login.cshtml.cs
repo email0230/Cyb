@@ -118,9 +118,14 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                     var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
                     bool isAdmin = await _signInManager.UserManager.IsInRoleAsync(user, "Admin");
 
-                    if(!isAdmin)
+                    if (!isAdmin)
                     {
                         returnUrl = "/Identity/Account/Manage";
+                    }
+
+                    if (user.NeedToChangePassword || user.PasswordValidity < DateTime.Now)
+                    {
+                        returnUrl = "/PasswordChange";
                     }
 
                     _logger.LogInformation("User logged in.");
