@@ -33,9 +33,9 @@ namespace Cyb_mcfr.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Index(IFormCollection collection)
         {
-            var user = await _userManager.FindByEmailAsync(collection["Email"]);
+            ApplicationUser user = await _userManager.FindByEmailAsync(collection["Email"]);
 
-            if (collection["NewPassword"].Equals(collection["NewPasswordConfirm"]) && await _userManager.CheckPasswordAsync(user, collection["Password"]))
+            if (collection["NewPassword"].Equals(collection["NewPasswordConfirm"]) && await _userManager.CheckPasswordAsync(user, collection["Password"])) //TODO: remove checking if password is the same as the confirm password field
             {
                 foreach (var hash in user.PasswordHistory)
                 {
