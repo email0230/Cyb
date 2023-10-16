@@ -57,6 +57,11 @@ namespace Cyb_mcfr.Controllers
                 await _userManager.UpdateAsync(user);
                 await _signInManager.SignOutAsync();
             }
+            else if(await _userManager.CheckPasswordAsync(user, collection["Password"]) == false)
+            {
+                ModelState.AddModelError(string.Empty, "Your current password is incorrect!");
+                return View();
+            }
 
             try
             {
