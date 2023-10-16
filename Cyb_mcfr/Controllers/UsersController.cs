@@ -169,5 +169,23 @@ namespace Cyb_mcfr.Controllers
                 return View();
             }
         }
+        public async Task<ActionResult> ToggleValidation(string email, IFormCollection collection)
+        {
+            ApplicationUser user = await userManager.FindByEmailAsync(email);
+
+            user.EnablePasswordValidation = !user.EnablePasswordValidation;
+         
+            await userManager.UpdateAsync(user);
+
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
     }
 }

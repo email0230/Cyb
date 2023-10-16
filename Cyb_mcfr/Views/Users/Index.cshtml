@@ -40,7 +40,10 @@
                     @if (!item.isBlocked) { <div>-</div> }
                 </td>
                 <td>
-                    <input type="checkbox" asp-for="@item.EnablePasswordValidation" />
+                    <form asp-action="ToggleValidation" method="post">
+                        <input type="hidden" name="email" value="@item.Email" />
+                        <input type="checkbox" asp-for="@item.EnablePasswordValidation" onchange="this.form.submit()" />
+                    </form>
                 </td>
             </tr>
         }
