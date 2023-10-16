@@ -16,6 +16,7 @@
             <th>Delete user</th>
             <th>Block/Unblock</th>
             <th><a asp-action="Create">Create user</a></th>
+            <th>Validation</th>
         </tr>
     </thead>
     <tbody>
@@ -37,6 +38,9 @@
                 <td>
                     @if (item.isBlocked) { <div>Blocked</div> }
                     @if (!item.isBlocked) { <div>-</div> }
+                </td>
+                <td>
+                    <input type="checkbox" asp-for="@item.EnablePasswordValidation" />
                 </td>
             </tr>
         }
