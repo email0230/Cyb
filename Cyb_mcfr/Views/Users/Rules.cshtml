@@ -1,0 +1,34 @@
+﻿@model EditUserModel
+
+@{
+    ViewData["Title"] = "Rules";
+}
+
+<h1>Rules</h1>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Rules">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="PassMinLength" class="control-label"></label>
+                <input asp-for="PassMinLength" class="form-control" type="number"/>
+            </div>
+            <div class="form-group">
+                <label asp-for="PassValidityDays" class="control-label"></label>
+                <input asp-for="PassValidityDays" class="form-control" type="number" />
+            </div>
+            <div class="form-group">
+                <label asp-for="PassMustHaveDigits" class="control-label"></label>
+                <input type="checkbox" asp-for="PassMustHaveDigits"/>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>

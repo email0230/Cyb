@@ -5,8 +5,14 @@ namespace Cyb_mcfr.Models
 {
     public class EditUserModel
     {
-        public int Min { get; set; } = 5;
-
+        [Display(Name = "Minimum password length")]
+        public int PassMinLength { get; set; } = 14;
+        [Display(Name = "Password validity days")]
+        public int PassValidityDays { get; set; } = 30;
+        [Display(Name = "Password must have digits")]
+        public bool PassMustHaveDigits { get; set; } = true;
+        public bool PasswordValidation { get; set; } = true;
+        
         [Required]
         public string? Email { get; set; }
         [Required]

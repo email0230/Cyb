@@ -13,7 +13,9 @@ namespace Cyb_mcfr.Controllers
         ApplicationDbContext context;
         UserManager<ApplicationUser> userManager;
 
-        static int PasswordValidityDays = 30;
+        public static int PasswordValidityDays = 30;
+        public static int PasswordMinLength = 14;
+        public static bool PasswordMustHaveDigits = true;
 
         public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager)
         {
@@ -159,6 +161,31 @@ namespace Cyb_mcfr.Controllers
                 user.LockoutEnd = DateTime.Now;
 
             await userManager.UpdateAsync(user);
+
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public ActionResult Rules()
+        {
+            var model = new EditUserModel { PassMinLength = PasswordMinLength, PassMustHaveDigits = PasswordMustHaveDigits };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Rules(EditUserModel model)
+        {
+            PasswordMinLength = model.PassMinLength;
+            PasswordMustHaveDigits = model.PassMustHaveDigits;
+            PasswordValidityDays = model.PassValidityDays;
 
             try
             {

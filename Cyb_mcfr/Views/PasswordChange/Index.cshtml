@@ -3,7 +3,7 @@
 <h3>Your password must be changed!</h3>
 <div class="row">
     <div class="col-md-6">
-        <form asp-action="Index" method="post">
+        <form asp-action="Index" method="post" onsubmit="return validateMyForm();">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-floating">
                 <input asp-for="Password" class="form-control" autocomplete="current-password" aria-required="true" />
@@ -11,14 +11,14 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="NewPassword" class="form-control" autocomplete="new-password" aria-required="true" onchange="validateInput(this)" />
-                <label asp-for="NewPassword" class="form-label"></label>
+                <input asp-for="NewPassword" class="form-control" autocomplete="new-password" aria-required="true" onchange="validateInput(this)" id="new" />
+                <label asp-for="NewPassword" class="form-label" ></label>
                 <span asp-validation-for="NewPassword" id="validationMessage" class="text-danger"></span>
             </div>
             <div class="form-floating">
-                <input asp-for="NewPasswordConfirm" class="form-control" autocomplete="new-password" aria-required="true" />
+                <input asp-for="NewPasswordConfirm" class="form-control" autocomplete="new-password" aria-required="true" onchange="validateConfirm(this)" id="confirm" />
                 <label asp-for="NewPasswordConfirm" class="form-label"></label>
-                <span asp-validation-for="NewPasswordConfirm" class="text-danger"></span>
+                <span asp-validation-for="NewPasswordConfirm" id="validationMessage2" class="text-danger"></span>
             </div>
             <input asp-for="Email" class="form-control" hidden />
             <input type="submit" class="w-100 btn btn-lg btn-primary" value="Update password" />
@@ -29,12 +29,60 @@
 <script>
     function validateInput(inputElement) {
         var inputValue = inputElement.value;
+        const regex = new RegExp('.*[0-9].*');
 
-        if (inputValue.length < @Model.Min) {
-            document.getElementById("validationMessage").innerText = "The password must be at least " + @Model.Min + " and at max 100 characters long.";
+        if (@Model.PasswordValidation.ToString().ToLower() == false)
+        {
+            return;
+        }
+
+        if (inputValue.length < @Model.PassMinLength) {
+            document.getElementById("validationMessage").innerText = "The password must be at least " + @Model.PassMinLength + " characters long.";
         } else {
             document.getElementById("validationMessage").innerText = ""; 
         }
+
+        if (@Model.PassMustHaveDigits.ToString().ToLower()) 
+        {
+            if (regex.test(inputValue) == false)
+            {
+                document.getElementById("validationMessage").innerText = "The password must contain digits.";
+            }
+        }
+
+        validateConfirm(document.getElementById("confirm"));
+    }
+
+    function validateConfirm(inputElement) {
+        var inputValue = inputElement.value;
+
+        var pass = document.getElementById("new").value;
+
+        console.log(inputValue);
+        console.log(pass);
+
+        if (pass != inputValue) {
+            document.getElementById("validationMessage2").innerText = "Passwords do not match";
+        } else {
+            document.getElementById("validationMessage2").innerText = "";
+        }
+
+    }
+
+    function validateMyForm() {
+        var pass = document.getElementById("new").value;
+
+        if (pass.length == 0)
+        {
+            document.getElementById("validationMessage").innerText = "Password cannot be empty!";
+        }
+
+        if (document.getElementById("validationMessage").innerText == "" && document.getElementById("validationMessage2").innerText == "") 
+        {
+            return true;
+        }
+
+        return false;
     }
 </script>
 

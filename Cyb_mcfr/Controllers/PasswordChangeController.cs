@@ -11,8 +11,6 @@ namespace Cyb_mcfr.Controllers
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
 
-        static int PasswordValidityDays = 30;
-
         public PasswordChangeController(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager)
@@ -24,7 +22,11 @@ namespace Cyb_mcfr.Controllers
         public async Task<ActionResult> Index()
         {
             var user = await _userManager.FindByNameAsync(User.Identity.Name);
-            EditUserModel model = new EditUserModel { Email = user.Email };
+            EditUserModel model = new EditUserModel { Email = user.Email, 
+                PassMinLength = UsersController.PasswordMinLength,
+                PassMustHaveDigits = UsersController.PasswordMustHaveDigits,
+                PasswordValidation = user.EnablePasswordValidation
+            };
 
             return View(model);
         }
@@ -35,6 +37,14 @@ namespace Cyb_mcfr.Controllers
         {
             ApplicationUser user = await _userManager.FindByEmailAsync(collection["Email"]);
 
+            EditUserModel model = new EditUserModel
+            {
+                Email = user.Email,
+                PassMinLength = UsersController.PasswordMinLength,
+                PassMustHaveDigits = UsersController.PasswordMustHaveDigits,
+                PasswordValidation = user.EnablePasswordValidation
+            };
+
             if (collection["NewPassword"].Equals(collection["NewPasswordConfirm"]) && await _userManager.CheckPasswordAsync(user, collection["Password"])) //TODO: remove checking if password is the same as the confirm password field
             {
                 foreach (var hash in user.PasswordHistory)
@@ -43,7 +53,7 @@ namespace Cyb_mcfr.Controllers
                     if (result == PasswordVerificationResult.Success)
                     {
                         ModelState.AddModelError(string.Empty, "Your new password was already used. Create another one.");
-                        return View();
+                        return View(model);
                     }
                 }
 
@@ -51,7 +61,7 @@ namespace Cyb_mcfr.Controllers
                 var pass = _userManager.PasswordHasher.HashPassword(user, collection["NewPassword"]);
                 user.PasswordHash = pass;
                 user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
-                user.PasswordValidity = DateTime.Now.AddDays(PasswordValidityDays);
+                user.PasswordValidity = DateTime.Now.AddDays(UsersController.PasswordValidityDays);
                 user.NeedToChangePassword = false;
                 await _userManager.AddToRoleAsync(user, "User");
                 await _userManager.UpdateAsync(user);
@@ -60,7 +70,7 @@ namespace Cyb_mcfr.Controllers
             else if(await _userManager.CheckPasswordAsync(user, collection["Password"]) == false)
             {
                 ModelState.AddModelError(string.Empty, "Your current password is incorrect!");
-                return View();
+                return View(model);
             }
 
             try
@@ -69,7 +79,7 @@ namespace Cyb_mcfr.Controllers
             }
             catch
             {
-                return View();
+                return View(model);
             }
         }
     }
