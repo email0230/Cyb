@@ -97,7 +97,7 @@ namespace Cyb_mcfr.Controllers
                 user.PasswordHash = pass;
                 user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
                 user.PasswordValidity = DateTime.Now.AddDays(PasswordValidityDays);
-                await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
+                //await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
                 await userManager.UpdateAsync(user);
             }
 
