@@ -15,6 +15,8 @@ using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
+using Cyb_mcfr.Services;
+using Cyb_mcfr.Interfaces;
 
 namespace Cyb_mcfr.Areas.Identity.Pages.Account
 {
@@ -22,11 +24,13 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
     {
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<LoginModel> _logger;
+        private readonly IActivityService _activityService;
 
-        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger)
+        public LoginModel(SignInManager<ApplicationUser> signInManager, ILogger<LoginModel> logger, IActivityService activityService)
         {
             _signInManager = signInManager;
             _logger = logger;
+            _activityService = activityService;
         }
 
         /// <summary>
@@ -116,6 +120,9 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                 var result = await _signInManager.PasswordSignInAsync(Input.Email, Input.Password, Input.RememberMe, lockoutOnFailure: true);
                 if (result.Succeeded)
                 {
+                    Activity a = new Activity { Username = Input.Email, Date = DateTime.Now, Action = "Login", Description = "User succesfully logged in" };
+                    _activityService.AddAction(a);
+
                     var user = await _signInManager.UserManager.FindByEmailAsync(Input.Email);
                     bool isAdmin = await _signInManager.UserManager.IsInRoleAsync(user, "Admin");
 
