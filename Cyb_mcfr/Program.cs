@@ -22,13 +22,13 @@ namespace Cyb_mcfr
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
-            //builder.Services.Configure<IdentityOptions>(options => //lockout, jeżeli będzie RS takie coś chciał
-            //{
-            //    // Default Lockout settings.
-            //    options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
-            //    options.Lockout.MaxFailedAccessAttempts = 5;
-            //    options.Lockout.AllowedForNewUsers = true;
-            //});
+            builder.Services.Configure<IdentityOptions>(options => //lockout, jeżeli będzie RS takie coś chciał
+            {
+                // Default Lockout settings.
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.AllowedForNewUsers = true;
+            });
 
             //builder.Services.Configure<IdentityOptions>(options => //ten fragment kodu powoduje błąd przy wierszu 98 (16.10)
             //{
