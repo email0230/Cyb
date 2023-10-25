@@ -1,5 +1,7 @@
 ﻿using Cyb_mcfr.Data;
+using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
+using Cyb_mcfr.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,6 +23,9 @@ namespace Cyb_mcfr
                 .AddRoles<IdentityRole>()
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddScoped<IActivityService,ActivityService>();
+            builder.Services.AddScoped<IRepositoryService<Activity>, RepositoryService<Activity>>();
 
             builder.Services.Configure<IdentityOptions>(options => //lockout, jeżeli będzie RS takie coś chciał
             {
