@@ -12,7 +12,9 @@ namespace Cyb_mcfr.Models
         [Display(Name = "Password must have digits")]
         public bool PassMustHaveDigits { get; set; } = true;
         public bool PasswordValidation { get; set; } = true;
-        
+        [Display(Name = "Bad passwords before lockout")]
+        public int PasswordLockoutAttempts { get; set; } = 5;
+
         [Required]
         public string? Email { get; set; }
         [Required]
@@ -32,5 +34,6 @@ namespace Cyb_mcfr.Models
         [Display(Name = "Confirm new password")]
         [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
         public string? NewPasswordConfirm { get; set; }
+
     }
 }
