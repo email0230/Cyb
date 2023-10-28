@@ -42,6 +42,26 @@
             &copy; 2023 - Cyb_mcfr - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+    <script>
+        const n = 5;
+        var timeoutInMinutes = n; // Replace n with your desired timeout in minutes.
+        var timeout = timeoutInMinutes * 60 * 1000; // Convert minutes to milliseconds
+
+        var logoutTimer = setTimeout(function () {
+            window.location.href = '/Account/Logout'; // Redirect to the logout page
+        }, timeout);
+
+        // Reset the timer on user interaction (e.g., page navigation)
+        document.addEventListener('mousemove', resetTimer);
+        document.addEventListener('keypress', resetTimer);
+
+        function resetTimer() {
+            clearTimeout(logoutTimer);
+            logoutTimer = setTimeout(function () {
+                window.location.href = '/Account/Logout';
+            }, timeout);
+        }
+    </script>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
