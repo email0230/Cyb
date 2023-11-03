@@ -17,6 +17,7 @@ namespace Cyb_mcfr.Controllers
         public static int PasswordMinLength = 14;
         public static bool PasswordMustHaveDigits = true;
         public static int PasswordLockoutAttempts = 5;
+        public static int SessionDurationMinutes = 5;
 
         public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager)
         {
@@ -188,6 +189,7 @@ namespace Cyb_mcfr.Controllers
             PasswordMustHaveDigits = model.PassMustHaveDigits;
             PasswordValidityDays = model.PassValidityDays;
             PasswordLockoutAttempts = model.PasswordLockoutAttempts;
+            SessionDurationMinutes = model.SessionDuration;
 
             try
             {
