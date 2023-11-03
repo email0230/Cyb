@@ -37,7 +37,7 @@ namespace Cyb_mcfr
 
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(9999999); // all this seems to do is prevent from clicking on the hello [user] text, throwing an ugly error :D.
+                options.IdleTimeout = TimeSpan.FromMinutes(999); //fix later haha
             });
 
             var app = builder.Build();

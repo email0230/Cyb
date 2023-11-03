@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 
 namespace Cyb_mcfr.Controllers
 {
@@ -10,7 +9,6 @@ namespace Cyb_mcfr.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly SignInManager<ApplicationUser> _signInManager;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -25,14 +23,6 @@ namespace Cyb_mcfr.Controllers
         public IActionResult Privacy()
         {
             return View();
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Logout()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
