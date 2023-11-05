@@ -23,6 +23,14 @@
                     <label asp-for="Input.Password" class="form-label"></label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
+
+                @if (replaceme)
+                {
+                    <div class="alert alert-danger" role="alert">
+                        BLOKADA KONTA, [time here]
+                    </div>
+                }
+
                 <div>
                     <div class="checkbox">
                         <label asp-for="Input.RememberMe" class="form-label">

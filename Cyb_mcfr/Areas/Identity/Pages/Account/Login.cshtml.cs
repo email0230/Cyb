@@ -143,8 +143,9 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
-                if (result.IsLockedOut)
+                if (result.IsLockedOut) //TODO: replace this one with code that: shows the alert div in login.cshtml, starts a 5 minute timer serverside so it persists between refreshes
                 {
+                    bool replaceme = true;
                     _logger.LogWarning("User account locked out.");
                     return RedirectToPage("./Lockout");
                 }
