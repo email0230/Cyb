@@ -27,13 +27,21 @@ namespace Cyb_mcfr
             builder.Services.AddScoped<IActivityService,ActivityService>();
             builder.Services.AddScoped<IRepositoryService<Activity>, RepositoryService<Activity>>();
 
-            builder.Services.Configure<IdentityOptions>(options => //lockout, jeżeli będzie RS takie coś chciał
+            builder.Services.Configure<IdentityOptions>(options => 
             {
                 // Default Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
             });
+
+            #region session troubleshooting part 1
+            builder.Services.AddDistributedMemoryCache(); // This is used for session state
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(5); // to jest głupie i tylko tu przykleiłem bo stefan mi takie coś dał. wek!
+            });
+            #endregion
 
             //builder.Services.Configure<IdentityOptions>(options => //ten fragment kodu powoduje błąd przy wierszu 98 (16.10)
             //{
@@ -58,6 +66,8 @@ namespace Cyb_mcfr
 
             app.UseHttpsRedirection();
             app.UseStaticFiles();
+
+            app.UseSession(); //session troubleshooting part 2
 
             app.UseRouting();
 
