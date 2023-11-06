@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -18,15 +19,18 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
         private readonly ILogger<ChangePasswordModel> _logger;
+        private readonly IActivityService _activityService;
 
         public ChangePasswordModel(
             UserManager<ApplicationUser> userManager,
             SignInManager<ApplicationUser> signInManager,
-            ILogger<ChangePasswordModel> logger)
+            ILogger<ChangePasswordModel> logger, 
+            IActivityService activity)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
+            _activityService = activity;
         }
 
         /// <summary>
@@ -115,12 +119,16 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
+                Activity ac = new Activity { Username = user.Email, Date = DateTime.Now, Action = "Change Password", Description = "User failed to change their password" };
+                _activityService.AddAction(ac);
                 return Page();
             }
 
             user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
 
             await _signInManager.RefreshSignInAsync(user);
+            Activity a = new Activity { Username = user.Email, Date = DateTime.Now, Action = "Change Password", Description = "User changed their password successfully" };
+            _activityService.AddAction(a);
             _logger.LogInformation("User changed their password successfully.");
             StatusMessage = "Your password has been changed.";
 

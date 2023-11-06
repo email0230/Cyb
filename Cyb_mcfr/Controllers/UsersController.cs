@@ -1,4 +1,5 @@
 ﻿using Cyb_mcfr.Data;
+using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -10,8 +11,9 @@ namespace Cyb_mcfr.Controllers
     [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
-        ApplicationDbContext context;
-        UserManager<ApplicationUser> userManager;
+        private readonly ApplicationDbContext context;
+        private readonly UserManager<ApplicationUser> userManager;
+        private readonly IActivityService _activityService;
 
         public static int PasswordValidityDays = 30;
         public static int PasswordMinLength = 14;
@@ -19,10 +21,11 @@ namespace Cyb_mcfr.Controllers
         public static int PasswordLockoutAttempts = 5;
         public static int SessionDurationMinutes = 5;
 
-        public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager)
+        public UsersController(ApplicationDbContext c, UserManager<ApplicationUser> userManager, IActivityService activity)
         {
             context = c;
             this.userManager = userManager;
+            _activityService = activity;
         }
 
 
@@ -63,6 +66,9 @@ namespace Cyb_mcfr.Controllers
             await userManager.CreateAsync(user);
             //await userManager.AddToRoleAsync(user, "User");
 
+            Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Create user", Description = "User succesfully created " + user.Email };
+            _activityService.AddAction(a);
+
             try
             {
                 return RedirectToAction(nameof(Index));
@@ -101,6 +107,9 @@ namespace Cyb_mcfr.Controllers
                 user.PasswordValidity = DateTime.Now.AddDays(PasswordValidityDays);
                 //await userManager.ChangeEmailAsync(user, email, userManager.GenerateChangeEmailTokenAsync(user, email).Result);
                 await userManager.UpdateAsync(user);
+
+                Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Edit user", Description = "User succesfully edited " + user.Email };
+                _activityService.AddAction(a);
             }
 
             try
@@ -131,6 +140,10 @@ namespace Cyb_mcfr.Controllers
 
             await userManager.DeleteAsync(user);
 
+
+            Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Delete user", Description = "User succesfully deleted " + user.Email };
+            _activityService.AddAction(a);
+
             try
             {
                 return RedirectToAction(nameof(Index));
@@ -158,9 +171,17 @@ namespace Cyb_mcfr.Controllers
             user.isBlocked = !user.isBlocked;
 
             if(user.isBlocked)
+            {
                 user.LockoutEnd = DateTime.MaxValue;
+                Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Block user", Description = "User succesfully blocked " + user.Email };
+                _activityService.AddAction(a);
+            }
             else
+            {
                 user.LockoutEnd = DateTime.Now;
+                Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Unblock user", Description = "User succesfully unblocked " + user.Email };
+                _activityService.AddAction(a);
+            }
 
             await userManager.UpdateAsync(user);
 
@@ -191,6 +212,9 @@ namespace Cyb_mcfr.Controllers
             PasswordLockoutAttempts = model.PasswordLockoutAttempts;
             SessionDurationMinutes = model.SessionDuration;
 
+            Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Change rules", Description = "User succesfully changed password rules" };
+            _activityService.AddAction(a);
+
             try
             {
                 return RedirectToAction(nameof(Index));
@@ -200,6 +224,14 @@ namespace Cyb_mcfr.Controllers
                 return View();
             }
         }
+
+        public ActionResult Activities()
+        {
+            var model = _activityService.GetAllActivities().ToList();
+
+            return View(model);
+        }
+
         public async Task<ActionResult> ToggleValidation(string email, IFormCollection collection)
         {
             ApplicationUser user = await userManager.FindByEmailAsync(email);
