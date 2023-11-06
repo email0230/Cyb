@@ -31,7 +31,6 @@
                         </li>
                     </ul>
                     <p id="tickerObject">-</p>
-                    <button type="button" class="btn btn-danger" onclick="DebugButtonLogout()">(DEBUG) Force timeout</button>
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -54,7 +53,7 @@
         const n = @myModel.SessionDurationMinutes; // Replace n with your desired timeout in minutes.
         const timeoutInMinutes = n;
         const timeoutInSeconds = n * 60;
-        const timeout = timeoutInSeconds * 1000; // Convert seconds to milliseconds
+        const timeout = timeoutInSeconds * 1000; // Convert seconds to milliseconds;
         let logoutTimer;
 
         // Logout-related functions
@@ -62,9 +61,11 @@
             window.location.href = '/Identity/Account/Logout';
         }
 
-        function DebugButtonLogout() { //candidate for getting trashed soon
-            console.log("Button pressed: Forcing logout by timeout...");
-            ForceLogout();
+        // Format the time in MM:SS format
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
         }
 
         // Timer display function
@@ -77,7 +78,8 @@
 
                 if (element) {
                     const timeLeft = fullTime - counter;
-                    element.textContent = timeLeft;
+                    const formattedTime = formatTime(timeLeft);
+                    element.textContent = formattedTime;
                     counter++;
                 }
             }, 1000);
@@ -88,11 +90,12 @@
             myModel.IsLoggedIn = true;
         }
 
-        if (@myModel.IsLoggedIn.ToString().ToLower()) {
+            if (@myModel.IsLoggedIn.ToString().ToLower()) {
             logoutTimer = setTimeout(ForceLogout, timeout);
             ticker();
         }
     </script>
+
 
     @*<script src="~/js/timeout.js" asp-append-version="true"></script> @* <--- kod dot. wylogowywania po czasie *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
