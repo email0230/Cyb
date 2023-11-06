@@ -271,6 +271,10 @@ namespace Cyb_mcfr.Controllers
 
             var x = Random.Shared.Next(1, 100);
             var a = user.UserName.Length;
+
+            if (x == a)
+                x = Random.Shared.Next(a + 1, 100);
+
             user.OneTimePasswordX = x;
             user.OneTimePasswordEnabled = true;
 

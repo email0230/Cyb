@@ -55,6 +55,11 @@ namespace Cyb_mcfr.Controllers
         {
             var user = await _userManager.FindByEmailAsync(userModel.Email);
 
+            if(userModel.Password == null)
+            {
+                userModel.Password = string.Empty;
+            }
+
             var result = _userManager.PasswordHasher.VerifyHashedPassword(user, user.OneTimePassword, userModel.Password);
 
             if (result == PasswordVerificationResult.Success)
