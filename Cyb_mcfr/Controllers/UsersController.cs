@@ -250,5 +250,36 @@ namespace Cyb_mcfr.Controllers
             }
         }
 
+        public async Task<ActionResult> OneTimePassword(string email, IFormCollection collection)
+        {
+            ApplicationUser user = await userManager.FindByEmailAsync(email);
+
+            var x = Random.Shared.Next(1, 100);
+            var a = user.UserName.Length;
+            user.OneTimePasswordX = x;
+            user.OneTimePasswordEnabled = true;
+
+            var pass = Math.Log10(1.0 * a / x);
+            if (pass < 0)
+                pass *= -1;
+
+            pass -= ((int)pass);
+            pass *= 1000000;
+            var passString = ((int)pass).ToString();
+
+            user.OneTimePassword = userManager.PasswordHasher.HashPassword(user, passString);
+         
+            await userManager.UpdateAsync(user);
+
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
     }
 }

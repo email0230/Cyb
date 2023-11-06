@@ -19,6 +19,7 @@
             <th>Block/Unblock</th>
             <th><a asp-action="Create">Create user</a></th>
             <th>Validation</th>
+            <th>One-time password</th>
         </tr>
     </thead>
     <tbody>
@@ -46,6 +47,19 @@
                         <input type="hidden" name="email" value="@item.Email" />
                         <input type="checkbox" asp-for="@item.EnablePasswordValidation" onchange="this.form.submit()" />
                     </form>
+                </td>
+                <td>
+                    @if (item.OneTimePasswordEnabled)
+                    {
+                        <div>One-time password generated!</div>
+                    }
+                    @if (!item.OneTimePasswordEnabled)
+                    {
+                        <form asp-action="OneTimePassword" method="post">
+                            <input type="hidden" name="email" value="@item.Email" />
+                            <input type="button" onclick="this.form.submit()" value="Generate password" />
+                        </form>
+                    }
                 </td>
             </tr>
         }
