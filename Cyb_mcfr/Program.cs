@@ -24,13 +24,13 @@ namespace Cyb_mcfr
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddScoped<IActivityService,ActivityService>();
+            builder.Services.AddScoped<IActivityService, ActivityService>();
             builder.Services.AddScoped<IRepositoryService<Activity>, RepositoryService<Activity>>();
 
-            builder.Services.Configure<IdentityOptions>(options => 
+            builder.Services.Configure<IdentityOptions>(options =>
             {
                 // Default Lockout settings.
-                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(5);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
             });
@@ -84,7 +84,7 @@ namespace Cyb_mcfr
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-                var roles = new[] { "Admin", "User" };
+                var roles = new[] { "Operator", "Admin", "Moderator", "User" };
 
                 foreach (var role in roles)
                 {
@@ -93,29 +93,131 @@ namespace Cyb_mcfr
                 }
             }
 
+            await InitUsersStatically(app);
+
+            app.Run();
+        }
+
+        private static async Task InitUsersStatically(WebApplication app)
+        {
             using (var scope = app.Services.CreateScope())
             {
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
 
+                //User 0 (Admin)
                 string email = "admin@admin.com";
                 string password = "Admin!23";
 
                 if (await userManager.FindByNameAsync(email) == null)
                 {
+                    var adminUser = new ApplicationUser();
+                    adminUser.UserName = email;
+                    adminUser.Email = email;
+                    adminUser.EmailConfirmed = true;
+                    adminUser.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(adminUser, password);
+
+                    await userManager.AddToRoleAsync(adminUser, "Admin");
+                    await userManager.AddToRoleAsync(adminUser, "User");
+                }
+
+                // User 1 (Moderator)
+                string email1 = "moderator1@example.com";
+                string password1 = "Moderator1!23";
+
+                if (await userManager.FindByNameAsync(email1) == null)
+                {
+                    var modUser = new ApplicationUser();
+                    modUser.UserName = email1;
+                    modUser.Email = email1;
+                    modUser.EmailConfirmed = true;
+                    modUser.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(modUser, password1);
+                    await userManager.AddToRoleAsync(modUser, "Moderator");
+                }
+
+                // User 2 (Moderator)
+                string email2 = "moderator2@example.com";
+                string password2 = "Moderator2!23";
+
+                if (await userManager.FindByNameAsync(email2) == null)
+                {
+                    var modUser = new ApplicationUser();
+                    modUser.UserName = email2;
+                    modUser.Email = email2;
+                    modUser.EmailConfirmed = true;
+                    modUser.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(modUser, password2);
+                    await userManager.AddToRoleAsync(modUser, "Moderator");
+                }
+
+                // User 3 (Operator)
+                string email3 = "operator@example.com";
+                string password3 = "Operator1!23";
+
+                if (await userManager.FindByNameAsync(email3) == null)
+                {
+                    var OpUser = new ApplicationUser();
+                    OpUser.UserName = email3;
+                    OpUser.Email = email3;
+                    OpUser.EmailConfirmed = true;
+                    OpUser.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(OpUser, password3);
+                    await userManager.AddToRoleAsync(OpUser, "Operator");
+                }
+
+                // User 4 (User)
+                string email4 = "user4@example.com";
+                string password4 = "UserPass123!";
+
+                if (await userManager.FindByNameAsync(email4) == null)
+                {
                     var user = new ApplicationUser();
-                    user.UserName = email;
-                    user.Email = email;
+                    user.UserName = email4;
+                    user.Email = email4;
                     user.EmailConfirmed = true;
                     user.PasswordValidity = DateTime.MaxValue;
 
-                    await userManager.CreateAsync(user, password);
+                    await userManager.CreateAsync(user, password4);
+                    await userManager.AddToRoleAsync(user, "User");
+                }
 
-                    await userManager.AddToRoleAsync(user, "Admin");
+                // User 5 (User)
+                string email5 = "user5@example.com";
+                string password5 = "UserPass123!";
+
+                if (await userManager.FindByNameAsync(email5) == null)
+                {
+                    var user = new ApplicationUser();
+                    user.UserName = email5;
+                    user.Email = email5;
+                    user.EmailConfirmed = true;
+                    user.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(user, password5);
+                    await userManager.AddToRoleAsync(user, "User");
+                }
+
+                // User 6 (User)
+                string email6 = "user6@example.com";
+                string password6 = "UserPass123!";
+
+                if (await userManager.FindByNameAsync(email6) == null)
+                {
+                    var user = new ApplicationUser();
+                    user.UserName = email6;
+                    user.Email = email6;
+                    user.EmailConfirmed = true;
+                    user.PasswordValidity = DateTime.MaxValue;
+
+                    await userManager.CreateAsync(user, password6);
                     await userManager.AddToRoleAsync(user, "User");
                 }
             }
-
-            app.Run();
         }
     }
 }
