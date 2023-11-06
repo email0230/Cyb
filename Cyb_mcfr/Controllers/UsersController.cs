@@ -176,7 +176,7 @@ namespace Cyb_mcfr.Controllers
 
         public ActionResult Rules()
         {
-            var model = new EditUserModel { PassMinLength = PasswordMinLength, PassMustHaveDigits = PasswordMustHaveDigits };
+            var model = new EditUserModel { PassMinLength = PasswordMinLength, PassMustHaveDigits = PasswordMustHaveDigits, SessionDuration = SessionDurationMinutes };
 
             return View(model);
         }

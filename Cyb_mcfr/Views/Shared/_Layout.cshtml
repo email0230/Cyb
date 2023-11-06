@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var myModel = new LayoutViewModel();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -45,7 +49,52 @@
         </div>
     </footer>
 
-    <script src="~/js/timeout.js" asp-append-version="true"></script> @* <--- kod dot. wylogowywania po czasie *@
+    <script>
+        // Constants and Variables
+        const n = @myModel.SessionDurationMinutes; // Replace n with your desired timeout in minutes.
+        const timeoutInMinutes = n;
+        const timeoutInSeconds = n * 60;
+        const timeout = timeoutInSeconds * 1000; // Convert seconds to milliseconds
+        let logoutTimer;
+
+        // Logout-related functions
+        function ForceLogout() {
+            window.location.href = '/Identity/Account/Logout';
+        }
+
+        function DebugButtonLogout() { //candidate for getting trashed soon
+            console.log("Button pressed: Forcing logout by timeout...");
+            ForceLogout();
+        }
+
+        // Timer display function
+        function ticker() {
+            const fullTime = timeoutInSeconds;
+            let counter = 0;
+
+            setInterval(function () {
+                const element = document.getElementById("tickerObject");
+
+                if (element) {
+                    const timeLeft = fullTime - counter;
+                    element.textContent = timeLeft;
+                    counter++;
+                }
+            }, 1000);
+        }
+
+        @if (User.Identity.Name != null) // C# if statement
+        {
+            myModel.IsLoggedIn = true;
+        }
+
+        if (@myModel.IsLoggedIn.ToString().ToLower()) {
+            logoutTimer = setTimeout(ForceLogout, timeout);
+            ticker();
+        }
+    </script>
+
+    @*<script src="~/js/timeout.js" asp-append-version="true"></script> @* <--- kod dot. wylogowywania po czasie *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
