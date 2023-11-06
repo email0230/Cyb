@@ -14,6 +14,8 @@ namespace Cyb_mcfr.Models
         public bool PasswordValidation { get; set; } = true;
         [Display(Name = "Bad passwords before lockout")]
         public int PasswordLockoutAttempts { get; set; } = 5;
+        [Display(Name = "Minutes before timeout")]
+        public int SessionDuration { get; set; } = 5;
 
         [Required]
         public string? Email { get; set; }

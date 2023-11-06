@@ -35,12 +35,10 @@ namespace Cyb_mcfr
                 options.Lockout.AllowedForNewUsers = true;
             });
 
-            //builder.Services.Configure<IdentityOptions>(options => //ten fragment kodu powoduje błąd przy wierszu 98 (16.10)
-            //{
-            //    // grupa 6 (14 znaków, cyfry)
-            //    options.Password.RequireDigit = true;
-            //    options.Password.RequiredLength = 14;
-            //});
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(999); //fix later haha
+            });
 
             var app = builder.Build();
 
