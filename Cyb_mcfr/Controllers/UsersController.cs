@@ -212,6 +212,8 @@ namespace Cyb_mcfr.Controllers
             PasswordLockoutAttempts = model.PasswordLockoutAttempts;
             SessionDurationMinutes = model.SessionDuration;
 
+            userManager.Options.Lockout.MaxFailedAccessAttempts = model.PasswordLockoutAttempts;
+
             Activity a = new Activity { Username = User.Identity.Name, Date = DateTime.Now, Action = "Change rules", Description = "User succesfully changed password rules" };
             _activityService.AddAction(a);
 
