@@ -1,4 +1,5 @@
-﻿using Cyb_mcfr.Models;
+﻿using Cyb_mcfr.Interfaces;
+using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -10,13 +11,16 @@ namespace Cyb_mcfr.Controllers
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly SignInManager<ApplicationUser> _signInManager;
+        private readonly IActivityService _activityService;
 
         public PasswordChangeController(
             UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager)
+            SignInManager<ApplicationUser> signInManager, 
+            IActivityService activity)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _activityService = activity;
         }
 
         public async Task<ActionResult> Index()
@@ -53,6 +57,10 @@ namespace Cyb_mcfr.Controllers
                     if (result == PasswordVerificationResult.Success)
                     {
                         ModelState.AddModelError(string.Empty, "Your new password was already used. Create another one.");
+
+                        Activity ac = new Activity { Username = user.Email, Date = DateTime.Now, Action = "Change Password", Description = "User failed to change their password" };
+                        _activityService.AddAction(ac);
+
                         return View(model);
                     }
                 }
@@ -63,6 +71,10 @@ namespace Cyb_mcfr.Controllers
                 user.PasswordHistory = user.PasswordHistory.Append(user.PasswordHash).ToArray();
                 user.PasswordValidity = DateTime.Now.AddDays(UsersController.PasswordValidityDays);
                 user.NeedToChangePassword = false;
+
+                Activity a = new Activity { Username = user.Email, Date = DateTime.Now, Action = "Change Password", Description = "User changed their password successfully" };
+                _activityService.AddAction(a);
+
                 await _userManager.AddToRoleAsync(user, "User");
                 await _userManager.UpdateAsync(user);
                 await _signInManager.SignOutAsync();
@@ -70,6 +82,10 @@ namespace Cyb_mcfr.Controllers
             else if(await _userManager.CheckPasswordAsync(user, collection["Password"]) == false)
             {
                 ModelState.AddModelError(string.Empty, "Your current password is incorrect!");
+
+                Activity ac = new Activity { Username = user.Email, Date = DateTime.Now, Action = "Change Password", Description = "User failed to change their password" };
+                _activityService.AddAction(ac);
+
                 return View(model);
             }
 

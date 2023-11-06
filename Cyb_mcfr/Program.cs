@@ -39,7 +39,7 @@ namespace Cyb_mcfr
             builder.Services.AddDistributedMemoryCache(); // This is used for session state
             builder.Services.AddSession(options =>
             {
-                options.IdleTimeout = TimeSpan.FromMinutes(5); // to jest głupie i tylko tu przykleiłem bo stefan mi takie coś dał. wek!
+                options.IdleTimeout = TimeSpan.FromMinutes(999); // to jest głupie i tylko tu przykleiłem bo stefan mi takie coś dał. wek!
             });
             #endregion
 
@@ -49,6 +49,7 @@ namespace Cyb_mcfr
             //    options.Password.RequireDigit = true;
             //    options.Password.RequiredLength = 14;
             //});
+
 
             var app = builder.Build();
 

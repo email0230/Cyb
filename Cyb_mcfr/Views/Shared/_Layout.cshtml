@@ -1,4 +1,8 @@
-﻿<!DOCTYPE html>
+﻿@{
+    var myModel = new LayoutViewModel();
+}
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -26,6 +30,15 @@
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
                     </ul>
+                    <div id="timerContainer">
+                        <div id="progressBar">
+                            <div id="progressFill"></div>
+                        </div>
+                        <span id="tickerObject" class="badge badge-primary p-2 text-dark"></span>
+                    </div>
+
+
+
                     <partial name="_LoginPartial" />
                 </div>
             </div>
@@ -42,6 +55,82 @@
             &copy; 2023 - Cyb_mcfr - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
+
+    <script>
+        // Constants and Variables
+        const n = @myModel.SessionDurationMinutes; // Replace n with your desired timeout in minutes.
+        const timeoutInMinutes = n;
+        const timeoutInSeconds = n * 60;
+        const timeout = timeoutInSeconds * 1000; // Convert seconds to milliseconds;
+        let logoutTimer;
+
+        // Logout-related functions
+        function ForceLogout() {
+            window.location.href = '/Identity/Account/Logout';
+        }
+
+        // Format the time in MM:SS format
+        function formatTime(timeInSeconds) {
+            const minutes = Math.floor(timeInSeconds / 60);
+            const seconds = timeInSeconds % 60;
+            return `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Change text color to red when less than 30 seconds left
+        function updateTextColor(element, timeLeft) {
+            if (timeLeft < 30) {
+                element.classList.remove("text-dark");
+                element.classList.add("text-danger");
+            } else {
+                element.classList.remove("text-danger");
+                element.classList.add("text-dark");
+            }
+        }
+
+        function updateVerticalProgressBar(timeLeft) {
+            const progressBar = document.getElementById("progressFill");
+            const fullTime = timeoutInSeconds;
+            const percentage = (timeLeft / fullTime) * 100;
+            progressBar.style.height = percentage + "%";
+        }
+
+        // Timer display function
+        function ticker() {
+            const fullTime = timeoutInSeconds;
+            let counter = 0;
+
+            setInterval(function () {
+                const element = document.getElementById("tickerObject");
+
+                if (element) {
+                    const timeLeft = fullTime - counter;
+                    const formattedTime = formatTime(timeLeft);
+                    element.textContent = formattedTime;
+
+                    // Call the function to update the vertical progress bar
+                    updateVerticalProgressBar(timeLeft);
+
+                    // Call the function to update text color
+                    updateTextColor(element, timeLeft);
+
+                    counter++;
+                }
+            }, 1000);
+        }
+
+        @if (User.Identity.Name != null) // C# if statement
+        {
+            myModel.IsLoggedIn = true;
+        }
+
+            if (@myModel.IsLoggedIn.ToString().ToLower()) {
+            logoutTimer = setTimeout(ForceLogout, timeout);
+            ticker();
+        }
+    </script>
+
+
+    @*<script src="~/js/timeout.js" asp-append-version="true"></script> @* <--- kod dot. wylogowywania po czasie *@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
