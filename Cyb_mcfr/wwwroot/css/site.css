@@ -16,3 +16,24 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+#timerContainer {
+    display: flex;
+    align-items: center;
+}
+
+#progressBar {
+    width: 10px;
+    height: 50px;
+    background-color: #ccc;
+    border: 1px solid #999;
+    position: relative;
+}
+
+#progressFill {
+    width: 100%;
+    height: 100%; /* Start full */
+    background-color: #3498db; /* Progress color */
+    position: absolute;
+    bottom: 0;
+}
