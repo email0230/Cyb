@@ -23,6 +23,39 @@
                     <label asp-for="Input.Password" class="form-label"></label>
                     <span asp-validation-for="Input.Password" class="text-danger"></span>
                 </div>
+
+                <div id="lockoutDiv" class="alert alert-danger" role="alert" style="display: none;">
+                    Blokada
+                </div>
+                @*a pair of scripts, but since they are related im keeping them up here, instead of the bottom of the page where scripts usually are*@
+                @if (ViewData["ShowLockoutDiv"] as bool? == true) 
+                {
+                    <script>
+                        document.getElementById("lockoutDiv").style.display = "block";
+                    </script>
+                }
+
+                @if (ViewData["RemainingTimeInSeconds"] != null)
+                {
+                    <script>
+                        var remainingTimeInSeconds = @ViewData["RemainingTimeInSeconds"]; //ay carumba
+                        if (remainingTimeInSeconds > 0) {
+                            var countdownElement = document.getElementById("lockoutDiv");
+                            var countdownInterval = setInterval(function () {
+                                var minutes = Math.floor(remainingTimeInSeconds / 60);
+                                var seconds = remainingTimeInSeconds % 60;
+                                countdownElement.innerHTML = "Blokada " + (minutes < 10 ? "0" : "") + minutes + ":" + (seconds < 10 ? "0" : "") + seconds;
+                                remainingTimeInSeconds--;
+
+                                if (remainingTimeInSeconds < 0) {
+                                    clearInterval(countdownInterval);
+                                    countdownElement.innerHTML = "Koniec blokady! Spróbuj ponownie!";
+                                }
+                            }, 1000);
+                        }
+                    </script>
+                }
+
                 <div>
                     <div class="checkbox">
                         <label asp-for="Input.RememberMe" class="form-label">

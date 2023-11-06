@@ -143,10 +143,12 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
                 {
                     return RedirectToPage("./LoginWith2fa", new { ReturnUrl = returnUrl, RememberMe = Input.RememberMe });
                 }
-                if (result.IsLockedOut)
+                if (result.IsLockedOut) //TODO: replace this one with code that: shows the alert div in login.cshtml, starts a 5 minute timer serverside so it persists between refreshes
                 {
+                    ViewData["ShowLockoutDiv"] = true; ; // Set the flag to true
+                    cTicker();
                     _logger.LogWarning("User account locked out.");
-                    return RedirectToPage("./Lockout");
+                    return Page();
                 }
                 else
                 {
@@ -157,6 +159,25 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
 
             // If we got this far, something failed, redisplay form
             return Page();
+        }
+
+        public void cTicker()
+        {
+            // Calculate the timer's expiration time (e.g., 5 minutes from the current time)
+            DateTime expirationTime = DateTime.Now.AddMinutes(5);
+
+            // Store the expiration time in a session variable
+            HttpContext.Session.SetString("TimerExpiration", expirationTime.ToString());
+
+            string expirationTimeString = HttpContext.Session.GetString("TimerExpiration");
+            if (expirationTimeString != null && DateTime.TryParse(expirationTimeString, out DateTime expirationTimeParsed))
+            {
+                TimeSpan remainingTime = expirationTimeParsed - DateTime.Now;
+                int remainingSeconds = (int)remainingTime.TotalSeconds;
+
+                // Pass the remaining time to the view
+                ViewData["RemainingTimeInSeconds"] = remainingSeconds;
+            }
         }
     }
 }
