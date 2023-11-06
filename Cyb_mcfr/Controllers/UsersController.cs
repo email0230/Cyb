@@ -197,7 +197,11 @@ namespace Cyb_mcfr.Controllers
 
         public ActionResult Rules()
         {
-            var model = new EditUserModel { PassMinLength = PasswordMinLength, PassMustHaveDigits = PasswordMustHaveDigits, SessionDuration = SessionDurationMinutes };
+            var model = new EditUserModel { PassMinLength = PasswordMinLength, 
+                PassMustHaveDigits = PasswordMustHaveDigits, 
+                PassValidityDays = PasswordValidityDays, 
+                PasswordLockoutAttempts = PasswordLockoutAttempts,
+                SessionDuration = SessionDurationMinutes };
 
             return View(model);
         }
@@ -239,6 +243,37 @@ namespace Cyb_mcfr.Controllers
             ApplicationUser user = await userManager.FindByEmailAsync(email);
 
             user.EnablePasswordValidation = !user.EnablePasswordValidation;
+         
+            await userManager.UpdateAsync(user);
+
+            try
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            catch
+            {
+                return View();
+            }
+        }
+
+        public async Task<ActionResult> OneTimePassword(string email, IFormCollection collection)
+        {
+            ApplicationUser user = await userManager.FindByEmailAsync(email);
+
+            var x = Random.Shared.Next(1, 100);
+            var a = user.UserName.Length;
+            user.OneTimePasswordX = x;
+            user.OneTimePasswordEnabled = true;
+
+            var pass = Math.Log10(1.0 * a / x);
+            if (pass < 0)
+                pass *= -1;
+
+            pass -= ((int)pass);
+            pass *= 1000000;
+            var passString = ((int)pass).ToString();
+
+            user.OneTimePassword = userManager.PasswordHasher.HashPassword(user, passString);
          
             await userManager.UpdateAsync(user);
 
