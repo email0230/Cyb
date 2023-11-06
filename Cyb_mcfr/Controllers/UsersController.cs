@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Cyb_mcfr.Controllers
 {
@@ -30,10 +31,18 @@ namespace Cyb_mcfr.Controllers
 
 
         // GET: UsersController
-        public ActionResult Index()
+        public async Task<IActionResult> Index()
         {
-            //var model = userManager.Users.ToList();
-            var model = context.Users.ToList();
+            var model = await context.Users.ToListAsync();
+
+            foreach (var user in model)
+            {
+                var roles = await userManager.GetRolesAsync(user);
+                foreach (var role in roles)
+                {
+                    user.Roles = user.Roles.Append(role).ToArray();
+                }
+            }
 
             return View(model);
         }

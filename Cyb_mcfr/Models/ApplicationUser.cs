@@ -13,6 +13,7 @@ namespace Cyb_mcfr.Models
         public bool OneTimePasswordEnabled { get; set; } = false;
         public string OneTimePassword { get; set; } = string.Empty;
         public int OneTimePasswordX { get; set; }
+        public string[] Roles { get; set; } = new string[0];
         //check if there is a better way to make users have this enabled by default
     }
 

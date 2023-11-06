@@ -26,6 +26,12 @@ namespace Cyb_mcfr.Data
                 v => string.Join(',', v),
                 v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
 
+            builder.Entity<ApplicationUser>()
+            .Property(e => e.Roles)
+            .HasConversion(
+                v => string.Join(',', v),
+                v => v.Split(',', StringSplitOptions.RemoveEmptyEntries));
+
             // Inne konfiguracje bazy danych
         }
     }
