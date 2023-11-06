@@ -222,6 +222,14 @@ namespace Cyb_mcfr.Controllers
                 return View();
             }
         }
+
+        public ActionResult Activities()
+        {
+            var model = _activityService.GetAllActivities().ToList();
+
+            return View(model);
+        }
+
         public async Task<ActionResult> ToggleValidation(string email, IFormCollection collection)
         {
             ApplicationUser user = await userManager.FindByEmailAsync(email);
