@@ -164,7 +164,7 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account
         public void cTicker()
         {
             // Calculate the timer's expiration time (e.g., 5 minutes from the current time)
-            DateTime expirationTime = DateTime.Now.AddMinutes(5);
+            DateTime expirationTime = DateTime.Now.AddMinutes(15);
 
             // Store the expiration time in a session variable
             HttpContext.Session.SetString("TimerExpiration", expirationTime.ToString());
