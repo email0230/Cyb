@@ -1,8 +1,10 @@
-﻿using Cyb_mcfr.Data;
+﻿using BotDetect.Web;
+using Cyb_mcfr.Data;
 using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
 using Cyb_mcfr.Services;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 
 namespace Cyb_mcfr
@@ -27,12 +29,27 @@ namespace Cyb_mcfr
             builder.Services.AddScoped<IActivityService, ActivityService>();
             builder.Services.AddScoped<IRepositoryService<Activity>, RepositoryService<Activity>>();
 
+            builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            builder.Services.AddMemoryCache();
+            builder.Services.AddMvc();
+
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(20);
+                options.Cookie.IsEssential = true;
+            });
+
             builder.Services.Configure<IdentityOptions>(options =>
             {
                 // Default Lockout settings.
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
                 options.Lockout.MaxFailedAccessAttempts = 5;
                 options.Lockout.AllowedForNewUsers = true;
+            });
+
+            builder.Services.Configure<KestrelServerOptions>(options =>
+            {
+                options.AllowSynchronousIO = true;
             });
 
             #region session troubleshooting part 1
@@ -69,6 +86,8 @@ namespace Cyb_mcfr
             app.UseStaticFiles();
 
             app.UseSession(); //session troubleshooting part 2
+
+            app.UseCaptcha(builder.Configuration);
 
             app.UseRouting();
 

@@ -1,4 +1,5 @@
-﻿using Cyb_mcfr.Interfaces;
+﻿using BotDetect.Web.Mvc;
+using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -37,10 +38,28 @@ namespace Cyb_mcfr.Controllers
         {
             List<Models.Activity> model = new List<Models.Activity>();
 
-            if(User.Identity.Name != null)
+            if (User.Identity.Name != null)
                 model = _activityService.GetActivitiesForUser(User.Identity.Name).ToList();
 
             return View(model);
+        }
+
+        [HttpPost]
+        [CaptchaValidationActionFilter("CaptchaCode", "ExampleCaptcha", "Wrong Captcha!")]
+        public ActionResult ValidateCaptcha(Captcha model)
+        {
+            if (!ModelState.IsValid)
+            {
+                // TODO: Captcha validation failed, show error message      
+            }
+            else
+            {
+                // TODO: captcha validation succeeded; execute the protected action  
+
+                // Reset the captcha if your app's workflow continues with the same view
+                MvcCaptcha.ResetCaptcha("ExampleCaptcha");
+            }
+            return RedirectToAction("Index");
         }
     }
 }

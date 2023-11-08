@@ -1,4 +1,13 @@
-﻿@{
+﻿@model Captcha
+
+@section header {
+    <environment names="Development,Staging,Production"> 
+      <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl"
+            rel="stylesheet" type="text/css" />
+    </environment>
+}
+
+@{
     ViewData["Title"] = "Home Page";
 }
 
@@ -6,3 +15,18 @@
     <a href="users">Users</a>
     <a href="home/activities">My activities</a>
 </div>
+
+
+<form asp-action="ValidateCaptcha">
+    <label asp-for="CaptchaCode">Retype the code from the picture:</label>
+    <captcha id="ExampleCaptcha" user-input-id="CaptchaCode" />
+    <div class="actions">
+        <input asp-for="CaptchaCode" />
+        <input type="submit" value="Validate" />
+        <span asp-validation-for="CaptchaCode"></span>
+        @if ((Context.Request.Method == "POST") && ViewData.ModelState.IsValid)
+        {
+            <span class="correct">Correct!</span>
+        }
+    </div>
+</form>

@@ -11,6 +11,9 @@
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Cyb_mcfr.styles.css" asp-append-version="true" />
+    @RenderSection("header", required: false)
+    @* <link href="@BotDetect.Web.CaptchaUrls.Absolute.LayoutStyleSheetUrl"
+          rel="stylesheet" type="text/css" /> *@
 </head>
 <body>
     <header>
