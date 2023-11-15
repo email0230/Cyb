@@ -3,7 +3,9 @@
 }
 
 <div>
-    <img id="myImage" src="~/captchaImages/owoce.jpg" onclick="getImageCoordinates(event)" />
+    <h1>Captcha</h1>
+    <div>Click on @myModel.WhatToFind in this picture:</div>
+    <img id="myImage" src="~/captchaImages/@myModel.FileName" onclick="getImageCoordinates(event)" />
     <input id="check" type="checkbox" />
 </div>
 <script>
