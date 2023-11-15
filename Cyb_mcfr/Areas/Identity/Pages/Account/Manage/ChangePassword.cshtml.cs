@@ -5,6 +5,7 @@
 using System;
 using System.ComponentModel.DataAnnotations;
 using System.Threading.Tasks;
+using Cyb_mcfr.Extensions;
 using Cyb_mcfr.Interfaces;
 using Cyb_mcfr.Models;
 using Microsoft.AspNetCore.Identity;
@@ -80,6 +81,9 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
             [Display(Name = "Confirm new password")]
             [Compare("NewPassword", ErrorMessage = "The new password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
+
+            [Required]
+            public string RecaptchaResponse { get; set; }
         }
 
         public async Task<IActionResult> OnGetAsync()
@@ -112,6 +116,17 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
+            var recaptchaResponse = Input.RecaptchaResponse;
+            var recaptchaSecretKey = "6Lc3ZxApAAAAAEySQuCRv9Mu0ELmuBu6b257wwaH"; // Replace with your actual reCAPTCHA secret key
+
+            var recaptchaValidator = new RecaptchaValidator(recaptchaSecretKey);
+            var recaptchaResult = await recaptchaValidator.ValidateAsync(recaptchaResponse);
+
+            if (!recaptchaResult.Success)
+            {
+                ModelState.AddModelError(string.Empty, "reCAPTCHA validation failed. Please try again.");
+                return Page();
+            }
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {

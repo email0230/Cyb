@@ -8,19 +8,6 @@
 <h1>@ViewData["Title"]</h1>
 <div class="row">
     <div class="col-md-4">
-
-        <script type="text/javascript">
-            var onloadCallback = function () {
-                grecaptcha.render('html_element', {
-                    'sitekey': '6Lc3ZxApAAAAAHOoXiHxVtaoJg3Uq0pT9014C3p7'
-                });
-            };
-        </script>
-        <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-                async defer>
-        </script>
-
-
         <section>
             <form id="account" method="post">
                 <h2>Use a local account to log in.</h2>
@@ -93,14 +80,6 @@
                     <p>
                         <a id="resend-confirmation" asp-page="./ResendEmailConfirmation">Resend email confirmation</a>
                     </p>
-                    <p>
-                        <div id="html_element"></div>
-                        <br>
-                        <input type="submit" value="Submit">
-                    </p>
-                    <script src="https://www.google.com/recaptcha/api.js?onload=onloadCallback&render=explicit"
-                            async defer>
-                    </script>
                 </div>
             </form>  
         </section>
