@@ -1,0 +1,46 @@
+﻿@{
+    var myModel = Captcha.GetRandomCaptcha();
+}
+
+<div>
+    <img id="myImage" src="~/captchaImages/owoce.jpg" onclick="getImageCoordinates(event)" />
+    <input id="check" type="checkbox" />
+</div>
+<script>
+    function getImageCoordinates(event) {
+        var img = document.getElementById('myImage');
+
+        // Pobierz współrzędne kliknięcia względem strony
+        var xGlobal = event.clientX;
+        var yGlobal = event.clientY;
+
+        // Pobierz pozycję i rozmiar obrazka
+        var imgRect = img.getBoundingClientRect();
+
+        // Oblicz współrzędne kliknięcia względem obrazka
+        var xImage = xGlobal - imgRect.left;
+        var yImage = yGlobal - imgRect.top;
+        console.log(xImage + " " + yImage);
+
+        // var targetX = 369;
+        // var targetY = 208;
+        //var targetX = 162;
+        //var targetY = 158;
+        var targetX = @myModel.AnswerX;
+        var targetY = @myModel.AnswerY;
+
+        var ckechbox = document.getElementById('check');
+
+        if (xImage > targetX - 20 && xImage < targetX + 20 && yImage > targetY - 20 && yImage < targetY + 20) {
+            ckechbox.checked = true;
+        }
+        else {
+            ckechbox.checked = false;
+        }
+
+        //369, 208
+
+        // Przekazuje współrzędne do ukrytego pola formularza
+        //document.getElementById('<%= coordinatesHiddenField.ClientID %>').value = x + ',' + y;
+    }
+</script>
