@@ -9,7 +9,7 @@
 <div class="row">
     <div class="col-md-4">
         <section>
-            <form id="account" method="post">
+            <form id="account" method="post" onsubmit="return validateMyForm();">
                 <h2>Use a local account to log in.</h2>
                 <hr />
                 <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -64,6 +64,12 @@
                         </label>
                     </div>
                 </div>
+                <div id="divPartial">
+                    @Html.Partial("~/Views/Shared/Captcha.cshtml")
+                </div>
+                <div id="captchaAlert" class="alert alert-danger" role="alert" hidden>
+                    You did not pass the captcha!
+                </div>
                 <div>
                     <button id="login-submit" type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
                 </div>
@@ -84,6 +90,20 @@
             </form>
         </section>
     </div>
+    <script>
+        function validateMyForm() {
+            var check = document.getElementById("check").checked;
+            var alert = document.getElementById("captchaAlert");
+
+            if(check)
+            {
+                return true;
+            }
+            
+            alert.hidden = false;
+            return false;
+        }
+    </script>
     @*<div class="col-md-6 col-md-offset-2">
         <section>
             <h3>Use another service to log in.</h3>

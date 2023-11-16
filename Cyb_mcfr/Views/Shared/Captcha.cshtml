@@ -1,0 +1,49 @@
+﻿@using Cyb_mcfr.Models
+
+@{
+    var myModel = Captcha.GetRandomCaptcha();
+}
+
+<div id="captchaContainer">
+    <h1>Captcha</h1>
+    <div>Click on @myModel.WhatToFind in this picture:</div>
+    <img id="myImage" src="~/captchaImages/@myModel.FileName" onclick="getImageCoordinates(event)" />
+</div>
+<input id="check" type="checkbox" hidden />
+<div id="captchaAnswer" class="alert alert-success" role="alert" hidden>
+    You passed captcha!
+</div>
+<script>
+    function getImageCoordinates(event) {
+        var img = document.getElementById('myImage');
+        var captchaContainer = document.getElementById('captchaContainer');
+        var captchaAnswer = document.getElementById('captchaAnswer');
+
+        // Pobierz współrzędne kliknięcia względem strony
+        var xGlobal = event.clientX;
+        var yGlobal = event.clientY;
+
+        // Pobierz pozycję i rozmiar obrazka
+        var imgRect = img.getBoundingClientRect();
+
+        // Oblicz współrzędne kliknięcia względem obrazka
+        var xImage = xGlobal - imgRect.left;
+        var yImage = yGlobal - imgRect.top;
+        console.log(xImage + " " + yImage);
+
+        var targetX = @myModel.AnswerX;
+        var targetY = @myModel.AnswerY;
+
+        var ckechbox = document.getElementById('check');
+
+        if (xImage > targetX - 20 && xImage < targetX + 20 && yImage > targetY - 20 && yImage < targetY + 20) {
+            ckechbox.checked = true;
+            captchaContainer.remove();
+            captchaAnswer.hidden = false;
+        }
+        else {
+            ckechbox.checked = false;
+            window.location.reload();
+        }
+    }
+</script>
