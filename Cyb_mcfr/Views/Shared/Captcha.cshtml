@@ -1,16 +1,23 @@
-﻿@{
+﻿@using Cyb_mcfr.Models
+
+@{
     var myModel = Captcha.GetRandomCaptcha();
 }
 
-<div>
+<div id="captchaContainer">
     <h1>Captcha</h1>
     <div>Click on @myModel.WhatToFind in this picture:</div>
     <img id="myImage" src="~/captchaImages/@myModel.FileName" onclick="getImageCoordinates(event)" />
-    <input id="check" type="checkbox" />
+</div>
+<input id="check" type="checkbox" hidden />
+<div id="captchaAnswer" class="alert alert-success" role="alert" hidden>
+    You passed captcha!
 </div>
 <script>
     function getImageCoordinates(event) {
         var img = document.getElementById('myImage');
+        var captchaContainer = document.getElementById('captchaContainer');
+        var captchaAnswer = document.getElementById('captchaAnswer');
 
         // Pobierz współrzędne kliknięcia względem strony
         var xGlobal = event.clientX;
@@ -24,10 +31,6 @@
         var yImage = yGlobal - imgRect.top;
         console.log(xImage + " " + yImage);
 
-        // var targetX = 369;
-        // var targetY = 208;
-        //var targetX = 162;
-        //var targetY = 158;
         var targetX = @myModel.AnswerX;
         var targetY = @myModel.AnswerY;
 
@@ -35,14 +38,12 @@
 
         if (xImage > targetX - 20 && xImage < targetX + 20 && yImage > targetY - 20 && yImage < targetY + 20) {
             ckechbox.checked = true;
+            captchaContainer.remove();
+            captchaAnswer.hidden = false;
         }
         else {
             ckechbox.checked = false;
+            window.location.reload();
         }
-
-        //369, 208
-
-        // Przekazuje współrzędne do ukrytego pola formularza
-        //document.getElementById('<%= coordinatesHiddenField.ClientID %>').value = x + ',' + y;
     }
 </script>
