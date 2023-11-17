@@ -116,17 +116,20 @@ namespace Cyb_mcfr.Areas.Identity.Pages.Account.Manage
                 return NotFound($"Unable to load user with ID '{_userManager.GetUserId(User)}'.");
             }
 
-            var recaptchaResponse = Input.RecaptchaResponse;
-            var recaptchaSecretKey = "6Lc3ZxApAAAAAEySQuCRv9Mu0ELmuBu6b257wwaH"; // Replace with your actual reCAPTCHA secret key
+            #region reCaptcha
+            const string recaptchaSecretKey = "6Lc3ZxApAAAAAEySQuCRv9Mu0ELmuBu6b257wwaH";
+            string recaptchaResponse = Input.RecaptchaResponse;
 
-            var recaptchaValidator = new RecaptchaValidator(recaptchaSecretKey);
-            var recaptchaResult = await recaptchaValidator.ValidateAsync(recaptchaResponse);
+            RecaptchaValidator recaptchaValidator = new RecaptchaValidator(recaptchaSecretKey);
+            RecaptchaResult recaptchaResult = await recaptchaValidator.ValidateAsync(recaptchaResponse);
 
             if (!recaptchaResult.Success)
             {
                 ModelState.AddModelError(string.Empty, "reCAPTCHA validation failed. Please try again.");
                 return Page();
-            }
+            } 
+            #endregion
+
             var changePasswordResult = await _userManager.ChangePasswordAsync(user, Input.OldPassword, Input.NewPassword);
             if (!changePasswordResult.Succeeded)
             {
